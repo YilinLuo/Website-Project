@@ -1,0 +1,39 @@
+<% include ./partials/header %>
+<% include ./partials/nav %>
+
+
+<div class="content">
+  <div class="spacer"></div>
+  <h3 class="text-center">How many words can you remember before time runs out?!</h3>
+  <div class="spacer"></div>
+  <div class="row">
+    <div class="col-12 timer">
+      <div class="bar"></div>
+    </div>
+  </div>
+
+<div class="spacer"></div>
+  <div class="row">
+    <div class="col-4"><h4 id="score">Score: </h4></div>
+    <div class="col-8">
+      <button class="btn btn-success" id="startGame"onclick="startGame()">Start Game</button>
+      <button class="btn btn-danger"id="stopGame" onclick="stopGame()" disabled>Stop Game</button>
+    </div>
+  </div>
+
+    <div class="col">
+      <div class="spacer"></div>
+      <label id="instruction"> Press start to begin playing </label>
+      <input type="text" id="list-input" onkeydown="addToList(this, event)" autocomplete="off" disabled spellcheck="true"/>
+    </div>
+
+    <div class="spacer"></div>
+
+    <div>
+      <ul class="list list-group"></ul>
+    </div>
+
+</div>
+
+<% include ./partials/gameLogic %>
+<% include ./partials/footer %>

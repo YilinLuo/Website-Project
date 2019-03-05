@@ -1,0 +1,25 @@
+<% include ./partials/header %>
+<% include ./partials/nav %>
+<div class="content">
+ 
+  <div class="pregame"> 
+    <div class="spacer"></div>
+    
+    <h3>Create a new game</h3>
+    <input type="text" name="name" id="nameNew" placeholder="Enter your name" required>
+    <button class="btn btn-success" id="newGame"onclick="createGame()">New Game</button>     
+
+    <div class="spacer"></div>
+    <div class="spacer"></div>
+
+
+    <h3>Join an existing game</h3>
+    <input type="text" name="name" id="nameJoin" placeholder="Enter your name" required>
+    <input type="text" name="room" id="room"  placeholder="Enter Game ID" required>
+    <button class="btn btn-danger" id="joinGame"onclick="joinGame()">Join Game</button>     
+
+  </div>
+</div>
+
+<% include ./partials/gameLogicMulti %>
+<% include ./partials/footer %>

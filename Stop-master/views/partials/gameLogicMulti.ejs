@@ -1,0 +1,346 @@
+<script src="/socket.io/socket.io.js"></script>
+<script src="node_modules/jquery/dist/jquery.min.js"></script>
+
+
+<script>
+var isPlaying = false;
+var timer;
+var list = [];
+var letter;
+var score = 0;
+var roomID;
+var socket = io.connect('http://localhost:5000'),
+    game,
+    player;
+
+ /* 
+  * Player Class
+  */
+var Player = function(name, player1){
+  this.name = name;
+  this.player1 = player1;
+  this.score = 0;
+}
+
+
+ /* 
+  * Game Class
+  */
+var Game = function(roomId){
+  this.roomId = roomId;
+ // this.socket = socket;
+}
+
+//game methods 
+//this method should be invoked to start game for everybody
+
+Game.prototype.startGamePressed = function(){
+      console.log('click');
+      if(player.player1){
+        socket.emit('start game', {room: this.roomId});
+      }
+      else{
+        alert('The host must start the game.')
+      }
+}
+
+Game.prototype.startGame = function(){
+    //refractor to get letter from choice
+    this.refreshDisplay();
+    this.isPlaying = true;
+    var bar = $('.bar');
+    bar.css("background-color", "green");
+    letter = this.chooseRandomLetter();
+    document.getElementById("instruction").textContent = ("Enter all the words with letter " + letter);
+    document.getElementById("list-input").disabled = false;
+    document.getElementById("startGame").disabled = true;
+    document.getElementById("stopGame").disabled = false;
+    document.getElementById("list-input").placeholder = "";
+    document.getElementById("score").textContent = "Score = " + score;
+    this.startTimer();
+}
+
+Game.prototype.stopGame = function(){
+    //invoke method on server to stop game for everyone
+    socket.emit('stop game', {room: this.roomId});
+    this.isPlaying = false;
+    this.stopTimer();
+    document.getElementById("instruction").textContent = ("You can't enter words at this time");
+    document.getElementById("list-input").disabled = true;
+    document.getElementById("startGame").disabled = false;
+    document.getElementById("stopGame").disabled = true;
+    this.sendData();
+    list = [];
+
+}
+
+Game.prototype.startTimer = function() {
+  
+  var percentage = 100;
+  var bar = $('.bar');
+      timer = setInterval(function() {
+      percentage-=3.33;
+      bar.width(percentage+'%');
+         if(percentage <= 0)
+          {
+            this.stopGame();
+          }
+         else if(percentage < 25)
+          {
+            bar.css("background-color", "red");
+          }
+  }, 1000)
+}
+
+Game.prototype.stopTimer = function(){
+    socket.emit('stop timer');
+    clearInterval(timer);
+    var bar = $('.bar');
+    bar.width('100%');
+    bar.css("background-color", "lightgrey");
+}
+
+Game.prototype.addToList = function(input, event){
+    if(this.isPlaying){
+        if(event.keyCode == 13){
+             var item = input.value.toLowerCase();
+                if(item.charAt(0) === letter){
+                    if(!list.includes(item)){
+                        if (this.apiValidate(item)){
+                          this.displayItem(item);
+                          list.push(item);
+                          this.calculateScore(item);
+                          input.placeholder = "";
+                        } else {
+                          input.placeholder = "That is not a word";
+                        }
+
+                    } else {
+                        input.placeholder = "you already added that one 😏";
+                    }
+
+                } else {
+                   input.placeholder = "that doesn't start with " + letter +  " 😏";
+                }
+                input.value = "";
+                this.updateScore();
+        }
+    }
+}
+
+Game.prototype.displayItem = function(item){
+   var li = document.createElement('li');
+   li.setAttribute("class", "list-item list-group-item");
+   li.textContent = item;
+   document.querySelector('.list').appendChild(li);
+}
+
+Game.prototype.addToDB = function(item){
+    if(!list.includes(item)){
+       list.push(item);
+    }
+}
+
+Game.prototype.chooseRandomLetter = function(){
+    const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
+    return letters[Math.floor(Math.random() * 26)];
+}
+
+Game.prototype.scrabbleScore = function(word){
+    var score = 0;
+    var arr = word.split('');
+    arr.forEach((letter) => {
+
+        if(letter.includes('g') || letter.includes('d')){
+            score += 2;
+        }
+        else if(letter.includes('b') || letter.includes('m')  || letter.includes('p')){
+            score += 3;
+        }
+        else if(letter.includes('w') || letter.includes('h')  || letter.includes('y') || letter.includes('v')|| letter.includes('f')){
+            score += 4;
+        }
+        else if(letter.includes('k')){
+            score += 5;
+        }
+        else if(letter.includes('x') || letter.includes('j')){
+            score += 8;
+        }
+        else if(letter.includes('q') || letter.includes('z')){
+            score += 10;
+        }
+        else {
+            score ++;
+        }
+    });
+
+return score;
+
+}
+
+Game.prototype.updateScore = function(){
+    document.getElementById("score").textContent = "Score = " + score;
+}
+
+Game.prototype.calculateScore = function(word){
+  if(word.length >= 5){
+    score += 3;
+  } else {
+    score += 1;
+  }
+}
+
+Game.prototype.longestWord = function(){
+  var longestWord = list[0];
+  for(var i = 1; i < list.length; i ++){
+    if(list[i].length > longestWord.length){
+      longestWord = list[i];
+    }
+  }
+  console.log("longest word for this game: " + longestWord)
+  return longestWord
+}
+
+
+Game.prototype.refreshDisplay = function(){
+    document.getElementById("list-input").disabled = true
+    document.querySelector('.list').innerHTML = "";
+    list = [];
+    score = 0;
+}
+
+//api stuff
+Game.prototype.apiValidate = function(word){
+   // Send an request
+  var check = true;
+  var xhttp = new XMLHttpRequest();
+  xhttp.open("GET", "check?q="+ word, false);
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      var results = JSON.parse(this.responseText);
+      var wordMatch = "";
+      if(results.results.length != 0){
+        wordMatch = results.results[0].matchType;
+      }
+      if(results.results.length == 0 || wordMatch == "fuzzy"){
+        check = false;
+      }
+    }
+  };
+  xhttp.send();
+  console.log(check);
+  return check;
+}
+
+//sends game data to the server to parse and store in the database
+// words played, letter played, score, longest word played.
+Game.prototype.sendData = function(){
+  var xhttp = new XMLHttpRequest();
+  xhttp.open("POST", "add", true);
+  xhttp.setRequestHeader("words", list);
+  xhttp.setRequestHeader("letter", letter);
+  xhttp.setRequestHeader("score", score);
+  xhttp.setRequestHeader("longestWord", this.longestWord());
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      console.log("success");
+    }
+  };
+  xhttp.send();
+}
+//*****END GAME CLASS******//
+
+
+//handle socket emits
+//occurs in the create game page, not the game view
+socket.on('new game', function(data){
+  var message = 'Hello, ' + data.name + '! Please ask your friends to enter Game ID: ' +
+  data.room + '.';
+  game = new Game(data.room);
+  player = new Player(data.name, true); 
+  localStorage.setItem("gamePlayer", JSON.stringify({game: game, player: player}));
+  //game.show message method 
+});
+
+socket.on('player has joined', function(data){
+  var message = 'Hello, ' + data.name + '!';
+
+  game = new Game(data.room);
+  player = new Player(data.name, false); 
+  //game.show message method   
+  document.getElementById("startGame").disabled = true; //only player one can start game
+});
+
+socket.on('game started', function(data){
+  game.startGame();
+});
+
+socket.on('game stopped', function(data){
+  game.stopGame(data.message);
+  socket.leave(data.room);
+});
+
+socket.on('err', function(data){
+  //game.endGame(data.message)
+  alert(data.message);
+  window.location.replace('/newMultiDirector');
+
+});
+
+
+
+
+
+
+//director functions
+function createGame(){
+    
+  playerName = $('#nameNew').val();
+  if(!playerName){
+    alert('Please enter a name');
+    return;  
+  }
+  window.location.replace('/newMulti');
+  player1 = true;
+  socket.emit('create game', {name: playerName});  
+  
+}
+
+
+function joinGame(){ 
+
+  playerName = $('#nameJoin').val();
+    if(!playerName){
+      alert('Please enter a name');
+      return;  
+    }
+  roomID = $('#room').val();
+    if(!roomID){
+      alert('Please enter a game ID');
+      return;  
+    }
+    player1 = false;
+  socket.emit('join game', {name: playerName, room: roomID});
+  window.location.replace('/newMulti');
+ 
+}
+
+//wrapper methods
+function setOnStart(){
+  var game2 = JSON.parse(localStorage.getItem("gamePlayer")).game;
+  player = JSON.parse(localStorage.getItem("gamePlayer")).player;
+  game = new Game(game2.roomId);
+  game.startGamePressed();
+}
+
+function addToList(input, event){
+  game.addToList(input, event);
+}
+
+function stopGame() {
+  game.stopGame();
+}
+
+
+
+</script>

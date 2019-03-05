@@ -1,0 +1,211 @@
+<script>
+var isPlaying = false;
+var timer;
+var list = [];
+var letter;
+var score = 0;
+
+//this method should be invoked to start game for everybody
+function startGame(){
+    //refractor to get letter from choice
+    refreshDisplay();
+    isPlaying = true;
+    var bar = $('.bar');
+    bar.css("background-color", "green");
+    letter = chooseRandomLetter();
+    document.getElementById("instruction").textContent = ("Enter all the words with letter " + letter);
+    document.getElementById("list-input").disabled = false;
+    document.getElementById("startGame").disabled = true;
+    document.getElementById("stopGame").disabled = false;
+    document.getElementById("list-input").placeholder = "";
+    document.getElementById("score").textContent = "Score = " + score;
+    startTimer();
+}
+
+function stopGame(){
+    //invoke method on server to stop game for everyone
+    isPlaying = false;
+    stopTimer();
+    document.getElementById("instruction").textContent = ("You can't enter words at this time");
+    document.getElementById("list-input").disabled = true;
+    document.getElementById("startGame").disabled = false;
+    document.getElementById("stopGame").disabled = true;
+    sendData();
+    list = [];
+
+}
+
+function startTimer() {
+  var percentage = 100;
+  var bar = $('.bar');
+      timer = setInterval(function() {
+      percentage-=3.33;
+      bar.width(percentage+'%');
+         if(percentage <= 0)
+          {
+            stopGame();
+          }
+         else if(percentage < 25)
+          {
+            bar.css("background-color", "red");
+          }
+  }, 1000)
+}
+
+function stopTimer(){
+    clearInterval(timer);
+    var bar = $('.bar');
+    bar.width('100%');
+    bar.css("background-color", "lightgrey");
+}
+
+function addToList(input, event){
+    if(isPlaying){
+        if(event.keyCode == 13){
+             var item = input.value.toLowerCase();
+                if(item.charAt(0) === letter){
+                    if(!list.includes(item)){
+                        if (apiValidate(item)){
+                          displayItem(item);
+                          list.push(item);
+                          calculateScore(item);
+                          input.placeholder = "";
+                        } else {
+                          input.placeholder = "That is not a word";
+                        }
+
+                    } else {
+                        input.placeholder = "you already added that one 😏";
+                    }
+
+                } else {
+                   input.placeholder = "that doesn't start with " + letter +  " 😏";
+                }
+                input.value = "";
+                updateScore();
+        }
+    }
+}
+
+function displayItem(item){
+   var li = document.createElement('li');
+   li.setAttribute("class", "list-item list-group-item");
+   li.textContent = item;
+   document.querySelector('.list').appendChild(li);
+}
+
+function addToDB(item){
+    if(!list.includes(item)){
+       list.push(item);
+    }
+}
+
+function chooseRandomLetter(){
+    const letters = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n', 'o', 'p', 'q', 'r', 's', 't', 'u', 'v', 'w', 'x', 'y', 'z'];
+    return letters[Math.floor(Math.random() * 26)];
+}
+
+function scrabbleScore(word){
+    var score = 0;
+    var arr = word.split('');
+    arr.forEach((letter) => {
+
+        if(letter.includes('g') || letter.includes('d')){
+            score += 2;
+        }
+        else if(letter.includes('b') || letter.includes('m')  || letter.includes('p')){
+            score += 3;
+        }
+        else if(letter.includes('w') || letter.includes('h')  || letter.includes('y') || letter.includes('v')|| letter.includes('f')){
+            score += 4;
+        }
+        else if(letter.includes('k')){
+            score += 5;
+        }
+        else if(letter.includes('x') || letter.includes('j')){
+            score += 8;
+        }
+        else if(letter.includes('q') || letter.includes('z')){
+            score += 10;
+        }
+        else {
+            score ++;
+        }
+    });
+
+return score;
+
+}
+
+function updateScore(){
+    document.getElementById("score").textContent = "Score = " + score;
+}
+
+function calculateScore(word){
+  if(word.length >= 5){
+    score += 3;
+  } else {
+    score += 1;
+  }
+}
+
+function longestWord(){
+  var longestWord = list[0];
+  for(var i = 1; i < list.length; i ++){
+    if(list[i].length > longestWord.length){
+      longestWord = list[i];
+    }
+  }
+  console.log("longest word for this game: " + longestWord)
+  return longestWord
+}
+
+
+function refreshDisplay(){
+    document.getElementById("list-input").disabled = true
+    document.querySelector('.list').innerHTML = "";
+    list = [];
+    score = 0;
+}
+
+//api stuff
+function apiValidate(word){
+ // Send an request
+var check = true;
+var xhttp = new XMLHttpRequest();
+xhttp.open("GET", "check?q="+ word, false);
+xhttp.onreadystatechange = function() {
+  if (this.readyState == 4 && this.status == 200) {
+    var results = JSON.parse(this.responseText);
+    var wordMatch = "";
+    if(results.results.length != 0){
+      wordMatch = results.results[0].matchType;
+    }
+    if(results.results.length == 0 || wordMatch == "fuzzy"){
+      check = false;
+    }
+  }
+};
+xhttp.send();
+console.log(check);
+return check;
+}
+
+//sends game data to the server to parse and store in the database
+// words played, letter played, score, longest word played.
+function sendData(){
+  var xhttp = new XMLHttpRequest();
+  xhttp.open("POST", "add", true);
+  xhttp.setRequestHeader("words", list);
+  xhttp.setRequestHeader("letter", letter);
+  xhttp.setRequestHeader("score", score);
+  xhttp.setRequestHeader("longestWord", longestWord());
+  xhttp.onreadystatechange = function() {
+    if (this.readyState == 4 && this.status == 200) {
+      console.log("success");
+    }
+  };
+  xhttp.send();
+}
+
+</script>

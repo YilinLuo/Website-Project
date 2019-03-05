@@ -1,0 +1,12 @@
+<% include ./partials/header %>
+<% include ./partials/nav %>
+<div class="content">
+  <div class="spacer"></div>
+  <h1> Sign Up! </h1>
+  <form action="/signup" method="POST">
+    <input type="text" name="username" placeholder="username">
+    <input type="password" name="password" placeholder="password">
+    <input type="submit">
+  </form>
+</div>
+<% include ./partials/footer %>

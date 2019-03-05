@@ -1,0 +1,55 @@
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark topbar">
+  <a class="navbar-brand" href="/">Ocean's Three</a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="nav navbar-nav mr-auto">
+
+    </ul>
+
+    <ul class="nav navbar-nav navbar-right">
+      <li class="nav-item">
+        <a class="nav-link" href="/new">Build Your Vocab</a>
+      </li>
+      <% if(!user){ %>
+        <li class="nav-item">
+          <a class="nav-link" href="/login">Login</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="/signup">Sign Up</a>
+        </li>
+      <% }else{ %>
+        <li class="nav-item">
+          <a class="nav-link" href="/profile"><%= user.username %></a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/logout">Logout</a>
+        </li>
+      <% } %>
+    </ul>
+
+  </div>
+</nav>
+
+<% if( error && error.length > 0) { %>
+<div style="
+position: fixed;
+top: 80%;
+left: 80%;
+width: 20%;
+padding: 10px;
+" class="container"> <div class="alert alert-danger"> <%= error %> </div></div>
+<% } %>
+
+<% if( success && success.length > 0) { %>
+<div style="
+position: fixed;
+top: 80%;
+left: 80%;
+width: 20%;
+padding: 10px;
+" class="container"> <div class="alert alert-success"> <%= success %> </div></div>
+<% } %>

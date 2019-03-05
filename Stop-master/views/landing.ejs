@@ -1,0 +1,338 @@
+<% include ./partials/header %>
+<% include ./partials/nav %>
+<div class="content">
+  <div class="spacer"></div>
+  <div style="text-align: center;">
+    <h1> Welcome to STOP! </h1>
+    <h3> Created by Ocean's Three </h3>
+    <h4> This is a game that tests your vocabulary! </h4>
+  </div>
+  <div class="spacer"></div>
+  <div class=""style="text-align: center;">
+    <a name="button" href= "/new" class="btn btn-info">Start New Game</a>
+  </div>
+  <div class="spacer"></div>
+  <div class=""style="text-align: center;">
+    <a name="button" href= "/newMultiDirector" class="btn btn-info">Start New Multiplayer Game</a>
+  </div>
+
+  <html>
+      <style>
+      #container {
+        width: 800px;
+        height: 800px;
+        position: relative;
+        background: rgba(255, 255, 0, 0);
+      }
+      #animate {
+        width: 50px;
+        height: 50px;
+        position: absolute;
+        background-color: rgba(255, 0, 0, 0);
+      }
+      #animate_2 {
+        width: 50px;
+        height: 50px;
+        position: absolute;
+        background-color: #80800000;
+      }
+      #animate_3 {
+        width: 50px;
+        height: 50px;
+        position: absolute;
+        background-color: rgba(68, 0, 255, 0);
+      }
+      #animate_4 {
+        width: 50px;
+        height: 50px;
+        position: absolute;
+        background-color: rgba(225, 0, 255, 0);
+      }
+      #animate_5 {
+        width: 100px;
+        height: 50px;
+        position: absolute;
+        background-color: rgba(255, 0, 0, 0);
+      }
+
+      #animate_6 {
+        width: 200px;
+        height: 50px;
+        position: absolute;
+        background-color: rgba(255, 0, 0, 0);
+      }
+
+      #animate_7 {
+        width: 200px;
+        height: 50px;
+        position: absolute;
+        background-color: rgba(255, 0, 0, 0);
+      }
+
+      #animate_8 {
+        width: 300px;
+        height: 50px;
+        position: absolute;
+        background-color: rgba(255, 0, 0, 0);
+      }
+
+      #animate_9 {
+        width: 50px;
+        height: 50px;
+        position: absolute;
+        background-color: rgba(255, 0, 0, 0);
+      }
+
+      #animate_10 {
+        width: 50px;
+        height: 50px;
+        position: absolute;
+        background-color: rgba(255, 0, 0, 0);
+      }
+
+      #animate_11 {
+        width: 50px;
+        height: 50px;
+        position: absolute;
+        background-color: rgba(255, 0, 0, 0);
+      }
+
+      #animate_12 {
+        width: 50px;
+        height: 50px;
+        position: absolute;
+        background-color: rgba(255, 0, 0, 0);
+      }
+      </style>
+      
+     
+      
+      <div id ="container">
+        <div id ="animate" ><font color = "blue">hello</font></div>
+        <div id ="animate_3"><font color = #8B4513 >friend</font></div>
+        <div id ="animate_2"><font color = #FFB6C1 >love</font></div>
+        <div id ="animate_4"><font color = #6A5ACD >joy</font></div>
+        <div id ="animate_5"><font color = #FF4500 >happiness</font></div>
+        <div id ="animate_6"><font color = #800080 >opulent</font></div>
+        <div id ="animate_7"><font color = #000080>stupendous</font></div>
+        <div id ="animate_8"><font color = #FF00FF>translucent</font></div>
+        <div id ="animate_9"><font color = #20B2AA>centaur</font></div>
+        <div id ="animate_10"><font color = #A52A2A>crown</font></div>
+        <div id ="animate_11"><font color = #DDA0DD>hiatus</font></div>
+        <div id ="animate_12"><font color = #66CDAA>prince</font></div>
+      </div>
+      
+      <script>
+          window.onload =function(){
+            myMove();
+            myMove_2();
+            myMove_3();
+            myMove_4();
+            myMove_5();
+            myMove_6();
+            myMove_7();
+            myMove_8();
+            myMove_9();
+            myMove_10();
+            myMove_11();
+            myMove_12();
+          }
+          function myMove() {
+          var elem = document.getElementById("animate");   
+          var pos = 0;
+          var id = setInterval(frame, 5);
+          function frame() {
+            if (pos == 350) {
+              clearInterval(id);
+              myMove();
+            } else {
+              pos++; 
+              elem.style.top = pos + "px"; 
+              elem.style.left = pos + "px"; 
+            }
+          }
+        }
+
+        function myMove_2() {
+          var elem = document.getElementById("animate_2");   
+          var pos = 600;
+          var id = setInterval(frame, 50);
+          function frame() {
+            if (pos == 0) {
+              clearInterval(id);
+              myMove_2();
+            } else {
+              pos-=3; 
+              elem.style.top = pos +"px"; 
+              elem.style.left = pos + "px"; 
+            }
+          }
+        }
+
+        function myMove_3() {
+          var elem = document.getElementById("animate_3");   
+          var pos = 400;
+          var id = setInterval(frame_3, 5);
+          function frame_3() {
+            if (pos == 20) {
+              clearInterval(id);
+              myMove_3();
+            } else {
+              pos--; 
+              elem.style.top = pos + "px"; 
+              elem.style.left = pos + "px"; 
+            }
+          }
+        }
+
+        function myMove_4() {
+          var elem = document.getElementById("animate_4");   
+          var pos = 500;
+          var id = setInterval(frame, 30);
+          function frame() {
+            if (pos == 700) {
+              clearInterval(id);
+              myMove_4();
+            } else {
+              pos+=2; 
+              elem.style.top = pos - "px"; 
+              elem.style.left = pos + "px"; 
+            }
+          }
+        }
+
+        function myMove_5() {
+          var elem = document.getElementById("animate_5");   
+          var pos = 200;
+          var id = setInterval(frame, 20);
+          function frame() {
+            if (pos == 800) {
+              clearInterval(id);
+              myMove_5();
+            } else {
+              pos+=3; 
+              elem.style.top = pos + "px"; 
+              elem.style.left = pos - "px"; 
+            }
+          }
+        }
+
+        function myMove_6() {
+          var elem = document.getElementById("animate_6");   
+          var pos = 200;
+          var id = setInterval(frame, 60);
+          function frame() {
+            if (pos == 320) {
+              clearInterval(id);
+              myMove_6();
+            } else {
+              pos+=7; 
+              elem.style.top = pos + "px"; 
+              elem.style.left = pos + "px"; 
+            }
+          }
+        }
+
+        function myMove_7() {
+          var elem = document.getElementById("animate_7");   
+          var pos = 200;
+          var id = setInterval(frame, 10);
+          function frame() {
+            if (pos > 320) {
+              clearInterval(id);
+              myMove_7();
+            } else {
+              pos+=2; 
+              elem.style.top = pos + "px"; 
+              elem.style.left = pos + "px"; 
+            }
+          }
+        }
+
+        function myMove_8() {
+          var elem = document.getElementById("animate_8");   
+          var pos = 800;
+          var id = setInterval(frame, 40);
+          function frame() {
+            if (pos < 320) {
+              clearInterval(id);
+              myMove_8();
+            } else {
+              pos-=2; 
+              elem.style.top = pos + "px"; 
+              elem.style.left = pos + "px"; 
+            }
+          }
+        }
+
+        function myMove_9() {
+          var elem = document.getElementById("animate_9");   
+          var pos = 700;
+          var id = setInterval(frame, 140);
+          function frame() {
+            if (pos <= 200) {
+              clearInterval(id);
+              myMove_9();
+            } else {
+              pos-=4; 
+              elem.style.top = pos + "px"; 
+              elem.style.left = pos + "px"; 
+            }
+          }
+        }
+
+        function myMove_10() {
+          var elem = document.getElementById("animate_10");   
+          var pos = 700;
+          var id = setInterval(frame, 20);
+          function frame() {
+            if (pos <= 10) {
+              clearInterval(id);
+              myMove_10();
+            } else {
+              pos-=3; 
+              elem.style.top = pos - "px"; 
+              elem.style.left = pos + "px"; 
+            }
+          }
+        }
+      
+        function myMove_11() {
+          var elem = document.getElementById("animate_11");   
+          var pos = 50;
+          var id = setInterval(frame, 20);
+          function frame() {
+            if (pos == 800) {
+              clearInterval(id);
+              myMove_11();
+            } else {
+              pos+=3; 
+              elem.style.top = pos + "px"; 
+              elem.style.left = pos - "px"; 
+            }
+          }
+        }
+
+        function myMove_12() {
+          var elem = document.getElementById("animate_12");   
+          var pos = 500;
+          var id = setInterval(frame, 30);
+          function frame() {
+            if (pos <= -10) {
+              clearInterval(id);
+              myMove_12();
+            } else {
+              pos-=2; 
+              
+              elem.style.top = 2+pos - "px"; 
+              elem.style.left = 5+pos + "px"; 
+            }
+          }
+        }
+      
+      </script>
+      
+      </body>
+      </html>
+</div>
+<% include ./partials/footer %>
